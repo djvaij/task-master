@@ -55,7 +55,11 @@ const Task: React.FC<TaskProps> = ({ todo }) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={styles.task}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`${styles.task} ${isDragging ? styles.dragging : ""}`}
+    >
       <div className={styles.taskHeader}>
         <div
           className={styles.dragHandle}
