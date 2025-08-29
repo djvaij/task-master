@@ -48,6 +48,37 @@ export const todosApi = createApi({
         method: "POST",
         body: { status: "todo", order: Date.now(), ...body },
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const tempId = `temp-${Math.random().toString(36).slice(2)}`;
+        const tempTodo: Todo = {
+          id: tempId,
+          title: arg.title,
+          description: arg.description,
+          status: arg.status ?? "todo",
+          order: arg.order ?? Date.now(),
+        };
+        const patchResult = dispatch(
+          todosApi.util.updateQueryData("getTodos", undefined, (draft) => {
+            draft.push(tempTodo);
+          })
+        );
+        try {
+          const { data: created } = await queryFulfilled;
+          // Replace temp with actual
+          dispatch(
+            todosApi.util.updateQueryData("getTodos", undefined, (draft) => {
+              const idx = draft.findIndex((t) => t.id === tempId);
+              if (idx !== -1) {
+                draft[idx] = created;
+              } else {
+                draft.push(created);
+              }
+            })
+          );
+        } catch {
+          patchResult.undo();
+        }
+      },
       invalidatesTags: [{ type: "Todos", id: "LIST" }],
     }),
     updateTodo: builder.mutation<Todo, { id: string; changes: UpdateTodoDto }>({
@@ -72,11 +103,28 @@ export const todosApi = createApi({
           patchResult.undo();
         }
       },
-      invalidatesTags: (result, error, arg) => [{ type: "Todos", id: arg.id }],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Todos", id: arg.id },
+      ],
     }),
     deleteTodo: builder.mutation<{ id: string }, string>({
       query: (id) => ({ url: `/todos/${id}`, method: "DELETE" }),
-      invalidatesTags: (result, error, id) => [
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          todosApi.util.updateQueryData("getTodos", undefined, (draft) => {
+            const idx = draft.findIndex((t) => t.id === id);
+            if (idx !== -1) {
+              draft.splice(idx, 1);
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: (_result, _error, id) => [
         { type: "Todos", id },
         { type: "Todos", id: "LIST" },
       ],

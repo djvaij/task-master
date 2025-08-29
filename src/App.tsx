@@ -16,7 +16,10 @@ import { useMemo, useState } from "react";
 import type { TodoStatus } from "./types/todo";
 
 function App() {
-  const { data: todos = [], isLoading, error } = useGetTodosQuery();
+  const { data: todos = [], isLoading } = useGetTodosQuery(undefined, {
+    refetchOnReconnect: true,
+    refetchOnFocus: false,
+  });
   const [updateTodo] = useUpdateTodoMutation();
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
@@ -167,20 +170,11 @@ function App() {
     setActiveId(null);
   };
 
-  if (isLoading) {
+  if (isLoading && todos.length === 0) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingSpinner}></div>
         <p>Loading your tasks...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <h2>Something went wrong</h2>
-        <p>We couldn't load your tasks. Please try refreshing the page.</p>
       </div>
     );
   }

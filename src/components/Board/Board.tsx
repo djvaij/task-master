@@ -8,7 +8,10 @@ import { useMemo } from "react";
 const statuses: TodoStatus[] = ["todo", "in_progress", "done"];
 
 export const Board = () => {
-  const { data: todos = [], isLoading, error } = useGetTodosQuery();
+  const { data: todos = [], isError } = useGetTodosQuery(undefined, {
+    refetchOnReconnect: true,
+    refetchOnFocus: false,
+  });
 
   const todosByStatus = useMemo(() => {
     return statuses.reduce((acc, status) => {
@@ -19,16 +22,16 @@ export const Board = () => {
     }, {} as Record<TodoStatus, Todo[]>);
   }, [todos]);
 
-  if (isLoading) return <div className={styles.loading}>Loading tasks...</div>;
-  if (error)
-    return (
-      <div className={styles.error}>
-        Error loading tasks. Please try again later.
-      </div>
-    );
+  // Не показуємо повноекранну помилку. Завжди рендеримо дошку.
+  // Якщо перше завантаження та немає даних — просто будуть порожні колонки.
 
   return (
     <div className={styles.board}>
+      {isError && todos.length > 0 && (
+        <div className={styles.banner}>
+          You are offline. Showing cached data.
+        </div>
+      )}
       {statuses.map((status) => (
         <Column key={status} status={status} todos={todosByStatus[status]} />
       ))}

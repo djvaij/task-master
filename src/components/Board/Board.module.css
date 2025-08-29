@@ -27,3 +27,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.banner {
+  grid-column: 1 / -1;
+  background: #fff3bf;
+  color: #8d6b00;
+  border: 1px solid #ffe066;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
