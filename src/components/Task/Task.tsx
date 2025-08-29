@@ -2,10 +2,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { TodoStatus } from "../../types/todo";
 import type { Todo } from "../../services/todosApi";
-import { useUpdateTodoMutation } from "../../services/todosApi";
+import {
+  useDeleteTodoMutation,
+  useUpdateTodoMutation,
+} from "../../services/todosApi";
 import { useToast } from "../common/Toast/ToastProvider";
 import styles from "./Task.module.css";
-import { GripVertical } from "lucide-react";
+import { GripVertical, Trash } from "lucide-react";
 
 type TaskProps = {
   todo: Todo;
@@ -41,6 +44,7 @@ const Task: React.FC<TaskProps> = ({ todo }) => {
   });
 
   const [updateTodo] = useUpdateTodoMutation();
+  const [deleteTodo, { isLoading: isDeleting }] = useDeleteTodoMutation();
   const { showToast } = useToast();
 
   const style = {
@@ -62,34 +66,59 @@ const Task: React.FC<TaskProps> = ({ todo }) => {
           <GripVertical />
         </div>
         <h3 className={styles.taskTitle}>{todo.title}</h3>
-        <select
-          className={styles.statusSelect}
-          value={todo.status}
-          onMouseDown={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-          onChange={async (e) => {
-            const nextStatus = e.target.value as TodoStatus;
-            if (nextStatus === todo.status) return;
-            showToast({ type: "info", message: "Оновлюємо статус..." });
-            try {
-              await updateTodo({
-                id: todo.id,
-                changes: { status: nextStatus, order: Date.now() },
-              }).unwrap();
-              showToast({ type: "success", message: "Статус оновлено" });
-            } catch {
-              showToast({
-                type: "error",
-                message: "Не вдалося оновити статус",
-              });
-            }
-          }}
-        >
-          <option value="todo">To Do</option>
-          <option value="in_progress">In Progress</option>
-          <option value="done">Done</option>
-        </select>
+        <div className={styles.taskActions}>
+          <select
+            className={styles.statusSelect}
+            value={todo.status}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            onChange={async (e) => {
+              const nextStatus = e.target.value as TodoStatus;
+              if (nextStatus === todo.status) return;
+              showToast({ type: "info", message: "Оновлюємо статус..." });
+              try {
+                await updateTodo({
+                  id: todo.id,
+                  changes: { status: nextStatus, order: Date.now() },
+                }).unwrap();
+                showToast({ type: "success", message: "Статус оновлено" });
+              } catch {
+                showToast({
+                  type: "error",
+                  message: "Не вдалося оновити статус",
+                });
+              }
+            }}
+          >
+            <option value="todo">To Do</option>
+            <option value="in_progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+          <button
+            className={styles.deleteBtn}
+            aria-label="Delete task"
+            title="Delete task"
+            disabled={isDeleting}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={async (e) => {
+              e.stopPropagation();
+              showToast({ type: "info", message: "Видаляємо задачу..." });
+              try {
+                await deleteTodo(todo.id).unwrap();
+                showToast({ type: "success", message: "Задачу видалено" });
+              } catch {
+                showToast({
+                  type: "error",
+                  message: "Не вдалося видалити задачу",
+                });
+              }
+            }}
+          >
+            <Trash />
+          </button>
+        </div>
       </div>
     </div>
   );
