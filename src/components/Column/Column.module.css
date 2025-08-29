@@ -1,0 +1,70 @@
+.column {
+  background: var(--column-bg, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease;
+}
+
+.column:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.columnHeader {
+  background-color: var(--column-header-bg, #f8f9fa);
+  border-bottom: 1px solid var(--border-color, #dee2e6);
+  color: var(--text-color, #343a40);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tasks {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Custom scrollbar */
+.tasks::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tasks::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.tasks::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.tasks::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* Empty state */
+.emptyState {
+  color: #868e96;
+  font-size: 0.9rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Dragging state */
+.draggingOver {
+  background-color: #e9ecef;
+  opacity: 0.8;
+}

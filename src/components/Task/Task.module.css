@@ -1,0 +1,67 @@
+.task {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 0.875rem 1rem;
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.task:active {
+  cursor: grabbing;
+}
+
+.task:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.taskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.taskTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #212529;
+  flex: 1;
+  padding-right: 0.5rem;
+}
+
+/* Drag overlay styles */
+.dragOverlay {
+  cursor: grabbing;
+  transform: rotate(2deg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* Status indicator styles */
+.status {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.status-todo {
+  background-color: #fff3bf;
+  color: #e67700;
+}
+
+.status-in-progress {
+  background-color: #d0ebff;
+  color: #1971c2;
+}
+
+.status-done {
+  background-color: #d3f9d8;
+  color: #2b8a3e;
+}
