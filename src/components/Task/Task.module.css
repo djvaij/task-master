@@ -3,14 +3,9 @@
   border: 1px solid #e9ecef;
   border-radius: 6px;
   padding: 0.875rem 1rem;
-  cursor: grab;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
-}
-
-.task:active {
-  cursor: grabbing;
 }
 
 .task:hover {
@@ -20,7 +15,25 @@
 .taskHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  cursor: grab;
+  margin-right: 8px;
+  color: #adb5bd;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.statusSelect {
+  font-size: 0.8rem;
+  padding: 4px 6px;
 }
 
 .taskTitle {

@@ -2,7 +2,10 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { TodoStatus } from "../../types/todo";
 import type { Todo } from "../../services/todosApi";
+import { useUpdateTodoMutation } from "../../services/todosApi";
+import { useToast } from "../common/Toast/ToastProvider";
 import styles from "./Task.module.css";
+import { GripVertical } from "lucide-react";
 
 type TaskProps = {
   todo: Todo;
@@ -33,9 +36,12 @@ const Task: React.FC<TaskProps> = ({ todo }) => {
       todo,
     },
     attributes: {
-      roleDescription: 'draggable task',
+      roleDescription: "draggable task",
     },
   });
+
+  const [updateTodo] = useUpdateTodoMutation();
+  const { showToast } = useToast();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -45,16 +51,45 @@ const Task: React.FC<TaskProps> = ({ todo }) => {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={styles.task}
-      {...attributes}
-      {...listeners}
-    >
+    <div ref={setNodeRef} style={style} className={styles.task}>
       <div className={styles.taskHeader}>
+        <div
+          className={styles.dragHandle}
+          {...attributes}
+          {...listeners}
+          aria-label="Drag"
+        >
+          <GripVertical />
+        </div>
         <h3 className={styles.taskTitle}>{todo.title}</h3>
-        {/* <StatusIndicator status={todo.status} /> */}
+        <select
+          className={styles.statusSelect}
+          value={todo.status}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+          onChange={async (e) => {
+            const nextStatus = e.target.value as TodoStatus;
+            if (nextStatus === todo.status) return;
+            showToast({ type: "info", message: "Оновлюємо статус..." });
+            try {
+              await updateTodo({
+                id: todo.id,
+                changes: { status: nextStatus, order: Date.now() },
+              }).unwrap();
+              showToast({ type: "success", message: "Статус оновлено" });
+            } catch {
+              showToast({
+                type: "error",
+                message: "Не вдалося оновити статус",
+              });
+            }
+          }}
+        >
+          <option value="todo">To Do</option>
+          <option value="in_progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
       </div>
     </div>
   );
