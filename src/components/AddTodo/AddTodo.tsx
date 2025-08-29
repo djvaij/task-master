@@ -4,15 +4,23 @@ import clsx from "clsx";
 import styles from "./AddTodo.module.css";
 
 interface AddTodoProps extends React.HTMLAttributes<HTMLDivElement> {
-  onAdd: (title: string) => void;
+  onAdd: (title: string) => Promise<void> | void;
 }
 
 export const AddTodo: FC<AddTodoProps> = ({ className, onAdd }) => {
   const [title, setTitle] = useState("");
+  const [isSubmitting, setSubmitting] = useState(false);
 
-  const handleAdd = () => {
-    if (title.trim() === "") return;
-    onAdd(title);
+  const handleAdd = async () => {
+    const value = title.trim();
+    if (!value || isSubmitting) return;
+    setSubmitting(true);
+    try {
+      await onAdd(value);
+      setTitle("");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -22,8 +30,14 @@ export const AddTodo: FC<AddTodoProps> = ({ className, onAdd }) => {
         className={styles.input}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            void handleAdd();
+          }
+        }}
       />
-      <button className={styles.button} onClick={handleAdd}>
+      <button className={styles.button} onClick={handleAdd} disabled={isSubmitting}>
         <Plus />
       </button>
     </div>
