@@ -1,0 +1,30 @@
+.status {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5rem;
+  min-width: 5rem;
+  text-align: center;
+}
+
+.statusTodo {
+  background-color: #fff3bf;
+  color: #e67700;
+}
+
+.statusInProgress {
+  background-color: #d0ebff;
+  color: #1971c2;
+}
+
+.statusDone {
+  background-color: #d3f9d8;
+  color: #2b8a3e;
+}

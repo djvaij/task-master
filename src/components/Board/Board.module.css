@@ -1,0 +1,38 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  height: calc(100vh - 3rem);
+  overflow-y: auto;
+  background-color: var(--board-background);
+}
+
+.loading,
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.error {
+  color: #e03131;
+}
+
+@media (max-width: 768px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.banner {
+  grid-column: 1 / -1;
+  background: #fff3bf;
+  color: #8d6b00;
+  border: 1px solid #ffe066;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
